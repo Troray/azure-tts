@@ -1,6 +1,17 @@
 ## 微软azure文本转语音 音频下载
-*Demo* : [https://tts.131213.xyz/](https://tts.131213.xyz/)
+*Demo* : <https://ttsdemo.yfi.moe/>
 
+教程：<https://blog.yfi.moe/post/azure-tts-trial/>
+
+Cf Workers: <https://github.com/yy4382/azure-tts/blob/main/cf_worker.js>
+
+docker image 请用 yunfinibol/azure-tts:main
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fyy4382%2Fazure-tts&project-name=azure-tts)
+
+> 以下为原项目的README.md
+
+---
 
 > *本文由GitHub Copilot 生成*
 
