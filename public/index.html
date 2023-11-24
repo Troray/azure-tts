@@ -37,6 +37,10 @@
             margin-bottom: 5px;
         }
 
+        button {
+            margin: 10px;
+        }
+
         select,
         textarea {
             width: 100%;
@@ -118,18 +122,50 @@
     <main>
         <h1>语音合成</h1>
         <div>
-            <label for="voiceSelect">声音：</label>
-            <select id="voiceSelect"></select>
-            <label for="voiceStyleSelect">声音风格：</label>
-            <select id="voiceStyleSelect"></select>
-            <label for="rateRange">语速：</label>
-            <input type="range" id="rateRange" min="0" max="100" value="0">
-            <label for="pitchRange">音调：</label>
-            <input type="range" id="pitchRange" min="0" max="100" value="0">
-            <label for="ssmlInput">SSML 文本：</label>
+            <label for="voiceSelect">声音 (voice)：</label>
+            <div style="display: flex; align-items: center;">
+                <select style="flex: 1;" id="voiceSelect"></select>
+                <button onclick="copyToClipboard('voiceSelect')">复制</button>
+            </div>
+            <label for="voiceStyleSelect">声音风格 (voiceStyle)：</label>
+            <div style="display: flex; align-items: center;">
+                <select style="flex: 1;" id="voiceStyleSelect"></select>
+                <button onclick="copyToClipboard('voiceStyleSelect')">复制</button>
+            </div>
+            <label for="rateRange">语速 (rate)：</label>
+            <div style="display: flex; align-items: center;">
+                <select style="flex: 1;" name="sudo" id="rateRange">
+                    <option value="default">默认 (default)</option>
+                    <option value="x-slow">极低 (x-slow)</option>
+                    <option value="slow">低 (slow)</option>
+                    <option value="medium">中 (medium)</option>
+                    <option value="fast">高 (fast)</option>
+                    <option value="x-fast">极高 (x-fast)</option>
+                </select>
+                <button onclick="copyToClipboard('rateRange')">复制</button>
+            </div>
+            <label for="pitchRange">音调(pitch)：</label>
+            <div style="display: flex; align-items: center;">
+                <select style="flex: 1;" name="sudo" id="pitchRange">
+                    <option value="default">默认 (default)</option>
+                    <option value="x-low">极低 (x-low)</option>
+                    <option value="low">低 (low)</option>
+                    <option value="medium">中 (medium)</option>
+                    <option value="high">高 (high)</option>
+                    <option value="x-high">极高 (x-high)</option>
+                </select>
+                <button onclick="copyToClipboard('pitchRange')">复制</button>
+            </div>
+            <label for="ssmlInput">测试文本：</label>
             <textarea id="ssmlInput" rows="4" cols="50"></textarea>
-            <button onclick="playAudio()">播放音频</button>
-            <button onclick="downloadAudio()">下载音频</button>
+            <div style="display: flex;" >
+                <button onclick="playAudio()">播放音频</button>
+                <button onclick="downloadAudio()">下载音频</button>
+            </div>
+            <div style="display: flex;">
+                <button onclick="legado()">一键导入阅读</button>
+                <button onclick="sourceReader()">复制源阅读导入链接</button>
+            </div>
         </div>
         <audio id="audioPlayer" controls></audio>
     </main>
@@ -138,12 +174,14 @@
 
     <footer class="footer">
         <div class="container text-center">
-            <p>本程序基于Azure tts，开源于<a href="https://github.com/x-dr/tts" target="_blank">GItHub</a></p>
+            <p>本程序基于Azure tts，开源于<a href="https://github.com/x-dr/tts" target="_blank">GitHub</a></p>
+            <p>本修改版HTML源码地址<a href="https://github.com/yy4382/azure-tts/raw/main/public/index.html"
+                    target="_blank">GitHub</a></p>
         </div>
     </footer>
 
     <script>
-        const voiceStyles = [{ "LocalName": "晓辰", "ShortName": "zh-CN-XiaochenNeural", "VoiceStyleNames": [""] }, { "LocalName": "晓晓", "ShortName": "zh-CN-XiaoxiaoNeural", "VoiceStyleNames": ["assistant", "chat", "customerservice", "newscast", "affectionate", "angry", "calm", "cheerful", "disgruntled", "fearful", "gentle", "lyrical", "sad", "serious", "poetry-reading", "friendly", "Default"] }, { "LocalName": "晓萱", "ShortName": "zh-CN-XiaoxuanNeural", "VoiceStyleNames": ["calm", "fearful", "cheerful", "disgruntled", "serious", "angry", "gentle", "depressed", "Default"] }, { "LocalName": "晓涵", "ShortName": "zh-CN-XiaohanNeural", "VoiceStyleNames": ["calm", "fearful", "cheerful", "disgruntled", "serious", "angry", "sad", "gentle", "affectionate", "embarrassed", "Default"] }, { "LocalName": "晓甄", "ShortName": "zh-CN-XiaozhenNeural", "VoiceStyleNames": ["angry", "disgruntled", "cheerful", "fearful", "sad", "serious", "Default"] }, { "LocalName": "云健", "ShortName": "zh-CN-YunjianNeural", "VoiceStyleNames": ["narration-relaxed", "sports-commentary", "sports-commentary-excited", "angry", "disgruntled", "cheerful", "sad", "serious", "depressed", "documentary-narration", "Default"] }, { "LocalName": "晓颜", "ShortName": "zh-CN-XiaoyanNeural", "VoiceStyleNames": [""] }, { "LocalName": "晓伊", "ShortName": "zh-CN-XiaoyiNeural", "VoiceStyleNames": ["angry", "disgruntled", "affectionate", "cheerful", "fearful", "sad", "embarrassed", "serious", "gentle", "Default"] }, { "LocalName": "云皓", "ShortName": "zh-CN-YunhaoNeural", "VoiceStyleNames": ["advertisement-upbeat", "Default"] }, { "LocalName": "曉佳（香港）", "ShortName": "zh-HK-HiuGaaiNeural", "VoiceStyleNames": [""] }, { "LocalName": "晓妮（陕西）", "ShortName": "zh-CN-shaanxi-XiaoniNeural", "VoiceStyleNames": [""] }, { "LocalName": "晓双", "ShortName": "zh-CN-XiaoshuangNeural", "VoiceStyleNames": ["chat", "Default"] }, { "LocalName": "晓梦", "ShortName": "zh-CN-XiaomengNeural", "VoiceStyleNames": ["chat", "Default"] }, { "LocalName": "云枫", "ShortName": "zh-CN-YunfengNeural", "VoiceStyleNames": ["angry", "disgruntled", "cheerful", "fearful", "sad", "serious", "depressed", "Default"] }, { "LocalName": "云泽", "ShortName": "zh-CN-YunzeNeural", "VoiceStyleNames": ["calm", "fearful", "cheerful", "disgruntled", "serious", "angry", "sad", "depressed", "documentary-narration", "Default"] }, { "LocalName": "曉臻（台湾）", "ShortName": "zh-TW-HsiaoChenNeural", "VoiceStyleNames": [""] }, { "LocalName": "晓北（辽宁）", "ShortName": "zh-CN-liaoning-XiaobeiNeural", "VoiceStyleNames": [""] }, { "LocalName": "晓秋", "ShortName": "zh-CN-XiaoqiuNeural", "VoiceStyleNames": [""] }, { "LocalName": "云野", "ShortName": "zh-CN-YunyeNeural", "VoiceStyleNames": ["embarrassed", "calm", "fearful", "cheerful", "disgruntled", "serious", "angry", "sad", "Default"] }, { "LocalName": "云希（四川）", "ShortName": "zh-CN-sichuan-YunxiNeural", "VoiceStyleNames": [""] }, { "LocalName": "晓睿", "ShortName": "zh-CN-XiaoruiNeural", "VoiceStyleNames": ["calm", "fearful", "angry", "sad", "Default"] }, { "LocalName": "云希", "ShortName": "zh-CN-YunxiNeural", "VoiceStyleNames": ["narration-relaxed", "embarrassed", "fearful", "cheerful", "disgruntled", "serious", "angry", "sad", "depressed", "chat", "assistant", "newscast", "Default"] }, { "LocalName": "雲哲（台湾）", "ShortName": "zh-TW-YunJheNeural", "VoiceStyleNames": [""] }, { "LocalName": "晓悠", "ShortName": "zh-CN-XiaoyouNeural", "VoiceStyleNames": [""] }, { "LocalName": "云夏", "ShortName": "zh-CN-YunxiaNeural", "VoiceStyleNames": ["calm", "fearful", "cheerful", "angry", "sad", "Default"] }, { "LocalName": "云登（河南）", "ShortName": "zh-CN-henan-YundengNeural", "VoiceStyleNames": [""] }, { "LocalName": "云扬", "ShortName": "zh-CN-YunyangNeural", "VoiceStyleNames": ["customerservice", "narration-professional", "newscast-casual", "Default"] }, { "LocalName": "曉雨（台湾）", "ShortName": "zh-TW-HsiaoYuNeural", "VoiceStyleNames": [""] }, { "LocalName": "雲龍（香港）", "ShortName": "zh-HK-WanLungNeural", "VoiceStyleNames": [""] }, { "LocalName": "晓墨", "ShortName": "zh-CN-XiaomoNeural", "VoiceStyleNames": ["embarrassed", "calm", "fearful", "cheerful", "disgruntled", "serious", "angry", "sad", "depressed", "affectionate", "gentle", "envious", "Default"] }, { "LocalName": "曉曼（香港）", "ShortName": "zh-HK-HiuMaanNeural", "VoiceStyleNames": [""] }, { "LocalName": "晓翔（山东）", "ShortName": "zh-CN-shandong-YunxiangNeural", "VoiceStyleNames": [""] }]
+        const voiceStyles = [{"LocalName": "晓晓", "ShortName": "zh-CN-XiaoxiaoNeural", "VoiceStyleNames": ["assistant", "chat", "customerservice", "newscast", "affectionate", "angry", "calm", "cheerful", "disgruntled", "fearful", "gentle", "lyrical", "sad", "serious", "poetry-reading", "friendly", "chat-casual", "whisper", "sorry"]}, {"LocalName": "云希", "ShortName": "zh-CN-YunxiNeural", "VoiceStyleNames": ["narration-relaxed", "embarrassed", "fearful", "cheerful", "disgruntled", "serious", "angry", "sad", "depressed", "chat", "assistant", "newscast"]}, {"LocalName": "云健", "ShortName": "zh-CN-YunjianNeural", "VoiceStyleNames": ["narration-relaxed", "sports-commentary", "sports-commentary-excited", "angry", "disgruntled", "cheerful", "sad", "serious", "depressed", "documentary-narration"]}, {"LocalName": "晓伊", "ShortName": "zh-CN-XiaoyiNeural", "VoiceStyleNames": ["angry", "disgruntled", "affectionate", "cheerful", "fearful", "sad", "embarrassed", "serious", "gentle"]}, {"LocalName": "云扬", "ShortName": "zh-CN-YunyangNeural", "VoiceStyleNames": ["customerservice", "narration-professional", "newscast-casual"]}, {"LocalName": "晓辰", "ShortName": "zh-CN-XiaochenNeural", "VoiceStyleNames": ["livecommercial", "poetry-reading"]}, {"LocalName": "晓涵", "ShortName": "zh-CN-XiaohanNeural", "VoiceStyleNames": ["calm", "fearful", "cheerful", "disgruntled", "serious", "angry", "sad", "gentle", "affectionate", "embarrassed"]}, {"LocalName": "晓梦", "ShortName": "zh-CN-XiaomengNeural", "VoiceStyleNames": ["chat"]}, {"LocalName": "晓墨", "ShortName": "zh-CN-XiaomoNeural", "VoiceStyleNames": ["embarrassed", "calm", "fearful", "cheerful", "disgruntled", "serious", "angry", "sad", "depressed", "affectionate", "gentle", "envious"]}, {"LocalName": "晓秋", "ShortName": "zh-CN-XiaoqiuNeural", "VoiceStyleNames": [""]}, {"LocalName": "晓睿", "ShortName": "zh-CN-XiaoruiNeural", "VoiceStyleNames": ["calm", "fearful", "angry", "sad"]}, {"LocalName": "晓双", "ShortName": "zh-CN-XiaoshuangNeural", "VoiceStyleNames": ["chat"]}, {"LocalName": "晓萱", "ShortName": "zh-CN-XiaoxuanNeural", "VoiceStyleNames": ["calm", "fearful", "cheerful", "disgruntled", "serious", "angry", "gentle", "depressed"]}, {"LocalName": "晓颜", "ShortName": "zh-CN-XiaoyanNeural", "VoiceStyleNames": [""]}, {"LocalName": "晓悠", "ShortName": "zh-CN-XiaoyouNeural", "VoiceStyleNames": [""]}, {"LocalName": "晓甄", "ShortName": "zh-CN-XiaozhenNeural", "VoiceStyleNames": ["angry", "disgruntled", "cheerful", "fearful", "sad", "serious"]}, {"LocalName": "云枫", "ShortName": "zh-CN-YunfengNeural", "VoiceStyleNames": ["angry", "disgruntled", "cheerful", "fearful", "sad", "serious", "depressed"]}, {"LocalName": "云皓", "ShortName": "zh-CN-YunhaoNeural", "VoiceStyleNames": ["advertisement-upbeat"]}, {"LocalName": "云夏", "ShortName": "zh-CN-YunxiaNeural", "VoiceStyleNames": ["calm", "fearful", "cheerful", "angry", "sad"]}, {"LocalName": "云野", "ShortName": "zh-CN-YunyeNeural", "VoiceStyleNames": ["embarrassed", "calm", "fearful", "cheerful", "disgruntled", "serious", "angry", "sad"]}, {"LocalName": "云泽", "ShortName": "zh-CN-YunzeNeural", "VoiceStyleNames": ["calm", "fearful", "cheerful", "disgruntled", "serious", "angry", "sad", "depressed", "documentary-narration"]}, {"LocalName": "晓柔", "ShortName": "zh-CN-XiaorouNeural", "VoiceStyleNames": [""]}, {"LocalName": "云杰", "ShortName": "zh-CN-YunjieNeural", "VoiceStyleNames": [""]}, {"LocalName": "云奇", "ShortName": "zh-CN-guangxi-YunqiNeural", "VoiceStyleNames": [""]}, {"LocalName": "云登", "ShortName": "zh-CN-henan-YundengNeural", "VoiceStyleNames": [""]}, {"LocalName": "晓北", "ShortName": "zh-CN-liaoning-XiaobeiNeural", "VoiceStyleNames": [""]}, {"LocalName": "云彪", "ShortName": "zh-CN-liaoning-YunbiaoNeural", "VoiceStyleNames": [""]}, {"LocalName": "晓妮", "ShortName": "zh-CN-shaanxi-XiaoniNeural", "VoiceStyleNames": [""]}, {"LocalName": "云翔", "ShortName": "zh-CN-shandong-YunxiangNeural", "VoiceStyleNames": [""]}, {"LocalName": "云希", "ShortName": "zh-CN-sichuan-YunxiNeural", "VoiceStyleNames": [""]}, {"LocalName": "曉曼", "ShortName": "zh-HK-HiuMaanNeural", "VoiceStyleNames": [""]}, {"LocalName": "雲龍", "ShortName": "zh-HK-WanLungNeural", "VoiceStyleNames": [""]}, {"LocalName": "曉佳", "ShortName": "zh-HK-HiuGaaiNeural", "VoiceStyleNames": [""]}, {"LocalName": "曉臻", "ShortName": "zh-TW-HsiaoChenNeural", "VoiceStyleNames": [""]}, {"LocalName": "雲哲", "ShortName": "zh-TW-YunJheNeural", "VoiceStyleNames": [""]}, {"LocalName": "曉雨", "ShortName": "zh-TW-HsiaoYuNeural", "VoiceStyleNames": [""]}]
         const voiceSelect = document.getElementById("voiceSelect");
         const voiceStyleSelect = document.getElementById("voiceStyleSelect");
 
@@ -151,7 +189,7 @@
         voiceStyles.forEach(voiceStyle => {
             const option = document.createElement("option");
             option.value = voiceStyle.ShortName;
-            option.text = voiceStyle.LocalName;
+            option.text = voiceStyle.LocalName + " (" + voiceStyle.ShortName + ")";
             voiceSelect.appendChild(option);
         });
 
@@ -176,6 +214,26 @@
 
         // 当声音选项更改时更新声音风格选项
         voiceSelect.addEventListener("change", updateVoiceStyleOptions);
+
+        // 复制到剪贴板
+        function copyToClipboard(elementId) {
+            let element = document.getElementById(elementId);
+            let valueToCopy = '';
+
+            // Check the type of the element
+            if (element.tagName.toLowerCase() === 'select') {
+                valueToCopy = element.options[element.selectedIndex].value;
+            } else if (element.tagName.toLowerCase() === 'input') {
+                valueToCopy = element.value;
+            }
+
+            // Now copy the text to clipboard
+            navigator.clipboard.writeText(valueToCopy).then(function () {
+                alert('Copying to clipboard was successful!');
+            }, function (err) {
+                alert('Could not copy text: ', err);
+            });
+        }
 
         function playAudio() {
             const voice = document.getElementById("voiceSelect").value;
@@ -215,6 +273,29 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+        }
+        function legado() {
+            const voice = document.getElementById("voiceSelect").value;
+            const voiceStyle = document.getElementById("voiceStyleSelect").value;
+            const pitch = document.getElementById("pitchRange").value;
+            const domain = window.location.origin;
+            const url = `/legado?voice=${encodeURIComponent(voice)}&voiceStyle=${encodeURIComponent(voiceStyle)}&pitch=${encodeURIComponent(pitch)}&domain=${encodeURIComponent(domain)}`;
+            importUrl = "legado://import/httpTTS?src=" + encodeURIComponent(window.location.origin + url);
+            // 打开importUrl
+            window.open(importUrl, '_blank');
+        }
+        function sourceReader() {
+            const voice = document.getElementById("voiceSelect").value;
+            const voiceStyle = document.getElementById("voiceStyleSelect").value;
+            const pitch = document.getElementById("pitchRange").value;
+            const domain = window.location.origin;
+            const url = `/sourceReader?voice=${encodeURIComponent(voice)}&voiceStyle=${encodeURIComponent(voiceStyle)}&pitch=${encodeURIComponent(pitch)}&domain=${encodeURIComponent(domain)}`;
+            // 复制包含域名的url到剪贴板
+            navigator.clipboard.writeText(window.location.origin + url).then(function () {
+                alert('复制成功！');
+            }, function (err) {
+                alert('复制失败: ', err);
+            });
         }
     </script>
 </body>

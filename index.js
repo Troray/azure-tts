@@ -18,7 +18,7 @@ app.get("/audio", async (req, res) => {
         const ssml = `<speak xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xmlns:emo="http://www.w3.org/2009/10/emotionml" version="1.0" xml:lang="en-US">
         <voice name="${voice}">
         <mstts:express-as style="${voiceStyle}">
-            <prosody rate="${rate}%" pitch="${pitch}%">
+            <prosody rate="${rate}" pitch="${pitch}">
             ${text}
            </prosody>
             </mstts:express-as>
@@ -43,6 +43,36 @@ app.get("/audio", async (req, res) => {
     }
 });
 
+app.get("/legado",async(req,res)=>{
+    const { voice, pitch, domain,voiceStyle } = req.query;
+    const sourceJson = {
+        "concurrentRate": "",
+        "contentType": "audio/mpeg",
+        "header": "",
+        "id": Date.now(),
+        "lastUpdateTime": Date.now(),
+        "loginCheckJs": "",
+        "loginUi": "",
+        "loginUrl": "",
+        "name": `Azure试用 ${voice} ${voiceStyle} ${pitch}`,
+        "url": `${domain}/audio?text={{speakText}}&rate={{speakSpeed*4}}%25\n&voice=${voice}\n&voiceStyle=${voiceStyle}\n&pitch=${pitch},\n{\"method\": \"GET\",}`
+    }
+    // 返回json数据
+    res.json(sourceJson);
+});
+
+app.get("/sourceReader",async(req,res)=>{
+    const { voice, pitch, domain,voiceStyle } = req.query;
+    const sourceJson = [{
+        "customOrder": 100,
+        "id": Date.now(),
+        "lastUpdateTime": Date.now(),
+        "name": `Azure试用 ${voice} ${voiceStyle} ${pitch}`,
+        "url": `${domain}/audio?text={{speakText}}&rate={{speakSpeed*4}}%25\n&voice=${voice}\n&voiceStyle=${voiceStyle}\n&pitch=${pitch},\n{\"method\": \"GET\",}`
+    }]
+    // 返回json数据
+    res.json(sourceJson);
+});
 
 
 // 启动服务器，监听在指定端口上
