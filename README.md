@@ -1,4 +1,8 @@
 ## 微软azure文本转语音 音频下载
+
+> [!CAUTION]
+> 这个用的接口被微软干掉了。。。请看（原本是本项目配套文章的）<https://blog.yfi.moe/post/azure-tts-trial/>这篇文章开头来寻找可能的替代方案。
+
 *Demo* : <https://ttsdemo.yfi.moe/>
 
 教程：<https://blog.yfi.moe/post/azure-tts-trial/>
